@@ -133,7 +133,7 @@ class _MonitorSensoresViewState extends State<MonitorSensoresView> {
             child: Stack(
               children: [
                 Image.asset(
-                  'assets/images/sensor_header.png',
+                  'assets/images/sensor_header.jpg',
                   height: 150,
                   width: double.infinity,
                   fit: BoxFit.cover,

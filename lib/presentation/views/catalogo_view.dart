@@ -13,35 +13,35 @@ class CatalogoView extends StatelessWidget {
         categoria: 'Audio',
         precio: 799,
         descripcion: 'Sonido envolvente, cancelación de ruido y batería de larga duración.',
-        imagen: 'assets/images/prod_audio.png',
+        imagen: 'assets/images/prod_audio.jpg',
       ),
       _Producto(
         nombre: 'Smartwatch Deportivo',
         categoria: 'Wearables',
         precio: 1499,
         descripcion: 'Monitoreo de actividad, salud y notificaciones inteligentes.',
-        imagen: 'assets/images/prod_watch.png',
+        imagen: 'assets/images/prod_watch.jpg',
       ),
       _Producto(
         nombre: 'Bocina Portátil',
         categoria: 'Audio',
         precio: 999,
         descripcion: 'Potencia portátil con conexión inalámbrica y diseño resistente.',
-        imagen: 'assets/images/prod_speaker.png',
+        imagen: 'assets/images/prod_speaker.jpg',
       ),
       _Producto(
         nombre: 'Power Bank 10000mAh',
         categoria: 'Accesorios',
         precio: 549,
         descripcion: 'Carga rápida y compacta para tus dispositivos móviles.',
-        imagen: 'assets/images/prod_power.png',
+        imagen: 'assets/images/prod_power.jpg',
       ),
       _Producto(
         nombre: 'Teclado Mecánico',
         categoria: 'Periféricos',
         precio: 1299,
         descripcion: 'Precisión, iluminación y comodidad para trabajo o juego.',
-        imagen: 'assets/images/prod_keyboard.png',
+        imagen: 'assets/images/prod_keyboard.jpg',
       ),
     ];
 
@@ -72,7 +72,7 @@ class CatalogoView extends StatelessWidget {
             child: Stack(
               children: [
                 Image.asset(
-                  'assets/images/banner_catalogo.png',
+                  'assets/images/banner_catalogo.jpg',
                   height: 170,
                   width: double.infinity,
                   fit: BoxFit.cover,
