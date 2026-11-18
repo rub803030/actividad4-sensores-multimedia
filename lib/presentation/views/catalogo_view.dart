@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'monitor_sensores_view.dart';
+
 class CatalogoView extends StatelessWidget {
   const CatalogoView({super.key});
 
@@ -22,9 +24,9 @@ class CatalogoView extends StatelessWidget {
             tooltip: 'Monitor de sensores',
             icon: const Icon(Icons.sensors),
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('El monitor de sensores se habilitará en la siguiente fase.'),
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const MonitorSensoresView(),
                 ),
               );
             },
@@ -34,7 +36,7 @@ class CatalogoView extends StatelessWidget {
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: productos.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        separatorBuilder: (_, _) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
           final producto = productos[index];
           return Card(
