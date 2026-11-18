@@ -58,8 +58,7 @@ class _MonitorSensoresViewState extends State<MonitorSensoresView> {
           if (!mounted) return;
           setState(() {
             _sensorDisponible = false;
-            _mensajeError =
-                'Sensor de acelerómetro no disponible: $error';
+            _mensajeError = 'Sensor de acelerómetro no disponible: $error';
           });
         },
         cancelOnError: false,
@@ -119,114 +118,183 @@ class _MonitorSensoresViewState extends State<MonitorSensoresView> {
   Widget build(BuildContext context) {
     final ColorScheme scheme = Theme.of(context).colorScheme;
     final Color estadoColor = _sacudidaDetectada ? Colors.red : Colors.green;
-    final String estadoTexto = _sacudidaDetectada
-        ? 'Sacudida fuerte detectada'
-        : 'Lectura estable';
+    final String estadoTexto =
+        _sacudidaDetectada ? 'Sacudida fuerte detectada' : 'Lectura estable';
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Monitor de Sensores'),
       ),
-      body: Padding(
+      body: ListView(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Card(
-              color: estadoColor.withValues(alpha: 0.12),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Icon(
-                      _sacudidaDetectada ? Icons.warning_amber : Icons.check_circle,
-                      color: estadoColor,
-                      size: 32,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            estadoTexto,
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  color: estadoColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Umbral: > ${_umbralSacudida.toStringAsFixed(1)} m/s² en cualquier eje',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Stack(
+              children: [
+                Image.asset(
+                  'assets/images/sensor_header.png',
+                  height: 150,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.black.withValues(alpha: 0.05),
+                          Colors.black.withValues(alpha: 0.25),
                         ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: estadoColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: estadoColor.withValues(alpha: 0.35)),
+            ),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 24,
+                  backgroundColor: estadoColor,
+                  child: Icon(
+                    _sacudidaDetectada
+                        ? Icons.warning_amber_rounded
+                        : Icons.sensors,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        estadoTexto,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              color: estadoColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Umbral de sacudida: > ${_umbralSacudida.toStringAsFixed(1)} m/s² en cualquier eje',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.analytics_outlined, color: scheme.primary),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Coordenadas del acelerómetro (m/s²)',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  _EjeTile(
+                    etiqueta: 'Eje X',
+                    valor: _formatear(_x),
+                    color: scheme.primary,
+                    icono: Icons.swap_horiz,
+                  ),
+                  const Divider(height: 20),
+                  _EjeTile(
+                    etiqueta: 'Eje Y',
+                    valor: _formatear(_y),
+                    color: scheme.secondary,
+                    icono: Icons.swap_vert,
+                  ),
+                  const Divider(height: 20),
+                  _EjeTile(
+                    etiqueta: 'Eje Z',
+                    valor: _formatear(_z),
+                    color: scheme.tertiary,
+                    icono: Icons.unfold_more,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          if (!_sensorDisponible || _mensajeError != null)
+            Card(
+              color: scheme.errorContainer,
+              child: Padding(
+                padding: const EdgeInsets.all(14),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(Icons.error_outline, color: scheme.onErrorContainer),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        _mensajeError ??
+                            'No se detectó un acelerómetro disponible en este dispositivo.',
+                        style: TextStyle(color: scheme.onErrorContainer),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Coordenadas del acelerómetro (m/s²)',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 12),
-                    _EjeTile(
-                      etiqueta: 'Eje X',
-                      valor: _formatear(_x),
-                      color: scheme.primary,
-                    ),
-                    const Divider(),
-                    _EjeTile(
-                      etiqueta: 'Eje Y',
-                      valor: _formatear(_y),
-                      color: scheme.secondary,
-                    ),
-                    const Divider(),
-                    _EjeTile(
-                      etiqueta: 'Eje Z',
-                      valor: _formatear(_z),
-                      color: scheme.tertiary,
-                    ),
-                  ],
-                ),
-              ),
+          const SizedBox(height: 16),
+          FilledButton.icon(
+            onPressed: _probarAudioManual,
+            icon: const Icon(Icons.volume_up),
+            label: const Text('Probar audio manualmente'),
+            style: FilledButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 12),
-            if (!_sensorDisponible || _mensajeError != null)
-              Card(
-                color: scheme.errorContainer,
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Text(
-                    _mensajeError ??
-                        'No se detectó un acelerómetro disponible en este dispositivo.',
-                    style: TextStyle(color: scheme.onErrorContainer),
+          ),
+          const SizedBox(height: 10),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.info_outline, color: scheme.primary),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Incluye enfriamiento de 1.5 s entre reproducciones para evitar saturación del audio. La suscripción y el reproductor se liberan en dispose().',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                   ),
-                ),
+                ],
               ),
-            const Spacer(),
-            FilledButton.icon(
-              onPressed: _probarAudioManual,
-              icon: const Icon(Icons.volume_up),
-              label: const Text('Probar audio manualmente'),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Incluye enfriamiento de 1.5 s entre reproducciones para evitar saturación del audio.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -236,35 +304,50 @@ class _EjeTile extends StatelessWidget {
   final String etiqueta;
   final String valor;
   final Color color;
+  final IconData icono;
 
   const _EjeTile({
     required this.etiqueta,
     required this.valor,
     required this.color,
+    required this.icono,
   });
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          children: [
-            Container(
-              width: 10,
-              height: 10,
-              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-            ),
-            const SizedBox(width: 8),
-            Text(etiqueta, style: Theme.of(context).textTheme.bodyLarge),
-          ],
+        Container(
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.14),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icono, color: color),
         ),
-        Text(
-          valor,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontFeatures: const [FontFeature.tabularFigures()],
-                fontWeight: FontWeight.w600,
-              ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            etiqueta,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            valor,
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
         ),
       ],
     );
